@@ -27,6 +27,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
+current_dir = os.getcwd()
+
 
 def run_cmd(cmd):
     try:
@@ -75,9 +77,10 @@ def run_cmd(cmd):
         logging.error(f"Unexpected error running command: {e}")
         return False
 
+
 def process(job_type, config):
     if not os.path.isabs(config):
-        config = os.path.join(script_dir, config)
+        config = os.path.join(current_dir, config)
     
     # Knowledge Distillation tasks
     if job_type in ['kd_black_box_train_only', 'kd_white_box_train_only']:
@@ -113,7 +116,7 @@ def process(job_type, config):
         if infer_success:
             cmd_train = [
                 'accelerate', 'launch',
-                '--config_file', os.path.join(parent_dir, 'configs/accelerate_config/muti_gpu.yaml'),
+                '--config_file', os.path.join(current_dir, 'configs/accelerate_config/muti_gpu.yaml'),
                 os.path.join(script_dir, 'kd/train.py'),
                 '--config', config
             ]
@@ -185,6 +188,7 @@ def process(job_type, config):
         logging.error(f"Unknown job type: {job_type}")
         sys.exit(1)
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, required=True, help='path to the json config file')
@@ -193,6 +197,7 @@ def main():
     config = json.load(open(config_path))
     job_type = config["job_type"]
     process(job_type, config_path)  
+
 
 if __name__ == '__main__':
     main()

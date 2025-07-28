@@ -5,3 +5,7 @@ tokenizers==0.21.1
 vllm==0.8.5
 openai
 jinja2
+jsonlines
+dill==0.3.8
+pyarrow>=15.0.0
+deepspeed
