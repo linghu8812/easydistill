@@ -78,7 +78,7 @@ def run_cmd(cmd):
         return False
 
 
-def process(job_type, config):
+def process(job_type, config, infer_only=False):
     if not os.path.isabs(config):
         config = os.path.join(current_dir, config)
     
@@ -113,7 +113,7 @@ def process(job_type, config):
         cmd_infer = ' '.join(cmd_infer)
         logging.info(f"Running command: {cmd_infer}")
         infer_success = run_cmd(cmd_infer)
-        if infer_success:
+        if infer_success and not infer_only:
             cmd_train = [
                 'accelerate', 'launch',
                 '--config_file', os.path.join(current_dir, 'configs/accelerate_config/muti_gpu.yaml'),
@@ -123,6 +123,8 @@ def process(job_type, config):
             cmd_train = ' '.join(cmd_train)
             logging.info(f"Running command: {cmd_train}")
             run_cmd(cmd_train)
+        elif infer_success:
+            logging.info("Infer success, training skipped")
         else:
             logging.error("Infer failed, skipping training")
     
@@ -192,11 +194,13 @@ def process(job_type, config):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, required=True, help='path to the json config file')
+    parser.add_argument('--infer_only', action='store_true', help='infer only')
     args = parser.parse_args()
     config_path = args.config
+    infer_only = args.infer_only
     config = json.load(open(config_path))
     job_type = config["job_type"]
-    process(job_type, config_path)  
+    process(job_type, config_path, infer_only)
 
 
 if __name__ == '__main__':
