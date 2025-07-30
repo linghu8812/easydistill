@@ -102,12 +102,7 @@ def process(job_type, config, infer_only=False):
         cmd_infer = ' '.join(cmd_infer)
         logging.info(f"Running command: {cmd_infer}")
         infer_success = run_cmd(cmd_infer)
-<<<<<<< HEAD
         if infer_success and not infer_only:
-=======
-
-        if infer_success:
->>>>>>> upstream/main
             cmd_train = [
                 'accelerate', 'launch',
                 '--config_file', os.path.join(current_dir, 'configs/accelerate_config/muti_gpu.yaml'),
@@ -132,7 +127,7 @@ def process(job_type, config, infer_only=False):
         logging.info(f"Running command: {cmd_infer}")
         infer_success = run_cmd(cmd_infer)
         
-        if infer_success:
+        if infer_success and not infer_only:
             cmd_train = [
                 'accelerate', 'launch',
                 '--config_file', os.path.join(parent_dir, 'configs/accelerate_config/muti_gpu.yaml'),
@@ -142,6 +137,8 @@ def process(job_type, config, infer_only=False):
             cmd_train = ' '.join(cmd_train)
             logging.info(f"Running command: {cmd_train}")
             run_cmd(cmd_train)
+        elif infer_success:
+            logging.info("Infer success, training skipped")
         else:
             logging.error("Infer failed, skipping training")
     

@@ -9,3 +9,4 @@ jsonlines
 dill==0.3.8
 pyarrow>=15.0.0
 deepspeed
+qwen-vl-utils[decord]==0.0.8
