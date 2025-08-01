@@ -86,7 +86,7 @@ def load_tokenizer_and_vllm(config, eos_token=None):
         model=model_path,
         tensor_parallel_size=num_gpus,
         trust_remote_code=True,
-        limit_mm_per_prompt={"image": 10, "video": 10},   # 可按需调整
+        # limit_mm_per_prompt={"image": 10, "video": 10},   # 可按需调整
         # 其余超参沿用原 config
         gpu_memory_utilization=config["inference"].get("gpu_memory_utilization", 0.9),
         max_model_len=config["inference"].get("max_model_len", 4096),
