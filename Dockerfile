@@ -1,10 +1,17 @@
 # docker build -t easydistill:0.0.1 .
-FROM pytorch/pytorch:2.5.1-cuda12.1-cudnn9-devel
+FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 
 # 设置环境变量和pip源
 ENV LANG=C.UTF-8 \
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on
+
+RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
+    sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get install -y python3-pip && \
+    ln -s /usr/bin/python3 /usr/bin/python && \
+    apt-get clean
 
 RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
     && pip config set install.trusted-host mirrors.aliyun.com
